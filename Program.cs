@@ -10,64 +10,79 @@ internal class Program
 
         var Personajes = new List<Personaje>();      //LISTA CON LOS PERSONAJES
         var PersonajesJson1 = new PersonajesJson();  // INSTACIO LA CLASE PARA PODER USAR LOS METODOS
-        Random random = new Random();
+        Random random = new Random();                // INSTACIO LA CLASE PARA PODER USAR LOS METODOS
 
 
         if (PersonajesJson1.Existe("personajes.json"))
-        {   
-            
+        {
+
             Personajes = PersonajesJson1.LeerPesonajes("personajes.json");
             // foreach (var personaje in Personajes)
             // {
             //     MostrarDatos(personaje);
             // }
-            
-            
-        }else
+
+
+        }
+        else
         {
-            CargarPesonajesALista(Personajes,10);
-            PersonajesJson1.GuardarPersonaje(Personajes,"personajes.json");
+            CargarPesonajesALista(Personajes, 10);
+            PersonajesJson1.GuardarPersonaje(Personajes, "personajes.json");
             // foreach (var personaje in Personajes)
             // {
             //     MostrarDatos(personaje);
             // }
         }
 
-        int i = 1;
-        while (Personajes[2].Salud > 0 && Personajes[7].Salud > 0)
-        {
-            if (i%2 == 0)  //FORMA PARA QUE ATAQUE UNO A LA VEZ
-            {
-                double ataque = Personajes[2].Destreza * Personajes[2].Fuerza * Personajes[2].Nivel;
-                double efectidad = random.Next(1, 101);
-                double defensa = Personajes[7].Armadura * Personajes[7].Velocidad;
-                int constanteDeAjuste = 500;
-                double DañoProvocado = ((ataque*efectidad) - defensa)/constanteDeAjuste;
-                Personajes[7].Salud = Personajes[7].Salud - DañoProvocado;
-                System.Console.WriteLine(Personajes[2].Nombre + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
+        
 
-            }else
+    }
+
+    private static void Lucha(Personaje p1,Personaje p2, Random random)
+    {
+        int i = 1;
+        double ataque;
+        double efectidad;
+        double defensa;
+        double DañoProvocado;
+        int constanteDeAjuste = 500;
+
+
+        while (p1.Salud > 0 && p2.Salud > 0)
+        {
+            if (i % 2 == 0)  //FORMA PARA QUE ATAQUE UNO A LA VEZ
             {
-                double ataque = Personajes[7].Destreza * Personajes[7].Fuerza * Personajes[7].Nivel;
-                double efectidad = random.Next(1, 101);
-                double defensa = Personajes[2].Armadura * Personajes[2].Velocidad;
-                int constanteDeAjuste = 500;
-                double DañoProvocado = ((ataque*efectidad) - defensa)/constanteDeAjuste;
-                Personajes[2].Salud = Personajes[2].Salud - DañoProvocado;
-                System.Console.WriteLine(Personajes[7].Nombre + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);            
+                ataque = p1.Destreza * p1.Fuerza * p1.Nivel;
+                efectidad = random.Next(1, 101);
+                defensa = p2.Armadura * p2.Velocidad;
+
+                DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
+                p2.Salud = p2.Salud - DañoProvocado;
+                System.Console.WriteLine(p1.Nombre + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
+
+            }
+            else
+            {
+                ataque = p2.Destreza * p2.Fuerza * p2.Nivel;
+                efectidad = random.Next(1, 101);
+                defensa = p1.Armadura * p1.Velocidad;
+
+                DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
+                p1.Salud = p1.Salud - DañoProvocado;
+                System.Console.WriteLine(p2.Nombre + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
             }
 
             i++;
         }
 
-        if (Personajes[2].Salud <= 0)
+        if (p2.Salud <= 0)
         {
-            System.Console.WriteLine(Personajes[2].Nombre + " ES EL GANADOR");
-        }else
-        {
-            System.Console.WriteLine(Personajes[7].Nombre + " ES EL GANADOR");
+            System.Console.WriteLine(p1.Nombre + " ES EL GANADOR");
         }
-
+        else
+        {
+            System.Console.WriteLine(p2.Nombre + " ES EL GANADOR");
+        }
     }
 
     private static void MostrarDatos(Personaje P)
