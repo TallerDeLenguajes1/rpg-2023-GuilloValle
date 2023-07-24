@@ -34,17 +34,15 @@ namespace CrearPersonaje
 
     }
 
-    public class Result
+    public class PlayerClass
     {
-        public string index { get; set; }
         public string name { get; set; }
-        public string url { get; set; }
     }
 
-    public class Root
+    public class PlayerClassGroup
     {
         public int count { get; set; }
-        public List<Result> results { get; set; }
+        public List<PlayerClass> Classes { get; set; }
     }
 
 }

@@ -43,41 +43,11 @@ internal class Program
         /*---------------------------------------------------------------------------------------------------*/
 
         
-            Root tipos1 = new Root();
-            var url = $"https://www.dnd5eapi.co/api/classes/";
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.ContentType = "application/json";
-            request.Accept = "application/json";
-            try
-            {
-                using (WebResponse response = request.GetResponse())
-                {
-                    using (Stream strReader = response.GetResponseStream())
-                    {
-                        if (strReader == null) return;
-                        using (StreamReader objReader = new StreamReader(strReader))
-                        {
-                            string responseBody = objReader.ReadToEnd();
-                            File.WriteAllText("tipos.json", responseBody);
-                            //System.Console.WriteLine(responseBody);
-                            //tipos1   = JsonSerializer.Deserialize<Root>(responseBody);
-                            // foreach (var item in tipos1.results)
-                            // {
-                            //     System.Console.WriteLine(item.name);
-                            // }
-                            
-                            
-                        }
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine("Problemas de acceso a la API");
-            }
-            
-        
+        var classesNames = ClassesService.GetClassesNames();
+        // Tu aplicación que hacer si esta lista llega vacía 
+        // - > reemplazamos por una lista genérica 
+        // - > Buscamos apagamos el sistema
+        //
       
         /*---------------------------------------------------------------------------------------------------*/
        
@@ -86,23 +56,8 @@ internal class Program
 
         while (Personajes.Count > 1)
         {
-            if (ronda == 1)
-            {
-                Console.WriteLine($"--- Ronda {ronda} , CUARTOS DE FINAL ---");
-                Console.WriteLine();
-            }
-  
-            if (ronda == 2)
-            {
-                Console.WriteLine($"--- Ronda {ronda} , SEMIFINALES ---");
-                Console.WriteLine();
-            }
-
-            if (ronda == 3)
-            {
-                Console.WriteLine($"--- Ronda {ronda} , FINAL  ---");
-                Console.WriteLine();
-            }
+            ShowCurrentRound(ronda);
+        
 
             List<Personaje> proximosPersonajes = new List<Personaje>();
 
@@ -141,6 +96,62 @@ internal class Program
 
     }
 
+    private static void ShowCurrentRound(int ronda)
+    {
+        var TipoRonda = "";
+
+        switch (ronda )
+        {
+            case 1:
+            TipoRonda = "CUARTOS DE FINAL";
+            break;
+
+            case 2:
+            TipoRonda = "SEMIFINALES";
+            break;
+
+            case 3:
+            TipoRonda = "FINAL";
+            break;
+        }
+
+        Console.WriteLine($"--- Ronda {ronda} , {TipoRonda}  ---");
+        Console.WriteLine();
+    }
+
+    public static List<string> GetClassesNames()
+    {
+            List<string> classesNames = new();  
+            var url = $"https://www.dnd5eapi.co/api/classes/";
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (Stream strReader = response.GetResponseStream())
+                    {
+                        if (strReader == null) return new List<string>();
+                        using (StreamReader objReader = new StreamReader(strReader))
+                        {
+                            var salida  = objReader.ReadToEnd();
+                            var classes = JsonSerializer.Deserialize<PlayerClassGroup>(salida)?.Classes;
+                            classes?.ForEach(classes => classesNames.Add(classes.name));
+                        }
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine("Problemas de acceso a la API");
+                return new List<string>();
+            }
+
+            return classesNames;  
+    }
+
     public static void EscribirMensaje(string message){
         for (int i = 0; i < message.Length; i++)
         {
@@ -171,28 +182,11 @@ internal class Program
         {
             if (i % 2 == 0)  //FORMA PARA QUE ATAQUE UNO A LA VEZ
             {
-                ataque = p1.Destreza * p1.Fuerza * p1.Nivel + 20;
-                efectidad = random.Next(1, 101);
-                defensa = p2.Armadura * p2.Velocidad;
-
-                DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
-                p2.Salud = p2.Salud - DañoProvocado;
-                EscribirMensaje(p1.Apodo + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)]);
-                EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
-                EscribirMensaje("La vida de " + p2.Apodo + " es: " + p2.Salud.ToString("0.00"));
-
+                AtacarPersonaje(p1,p2,random);
             }
             else
             {
-                ataque = p2.Destreza * p2.Fuerza * p2.Nivel;
-                efectidad = random.Next(1, 101);
-                defensa = p1.Armadura * p1.Velocidad;
-
-                DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
-                p1.Salud = p1.Salud - DañoProvocado;
-                EscribirMensaje(p2.Apodo + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
-                EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
-                EscribirMensaje("La vida de " + p1.Apodo + " es: " + p1.Salud.ToString("0.00"));
+                AtacarPersonaje(p2,p1,random);
             }
 
             i++;
@@ -210,6 +204,26 @@ internal class Program
             p2.Salud = 100;
             return p2;
         }
+    }
+
+    private static void AtacarPersonaje(Personaje atacante, Personaje defensor, Random random)
+    {
+        int i = 1;
+        double ataque;
+        double efectidad;
+        double defensa;
+        double DañoProvocado;
+        int constanteDeAjuste = 100;
+
+        ataque = atacante.Destreza * atacante.Fuerza * atacante.Nivel + 20;
+        efectidad = random.Next(1, 101);
+        defensa = defensor.Armadura * defensor.Velocidad;
+
+        DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
+        defensor.Salud = defensor.Salud - DañoProvocado;
+        EscribirMensaje(atacante.Apodo + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)]);
+        EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
+        EscribirMensaje("La vida de " + defensor.Apodo + " es: " + defensor.Salud.ToString("0.00"));
     }
 
     private static void MostrarDatos(Personaje P)
