@@ -43,7 +43,7 @@ internal class Program
         /*---------------------------------------------------------------------------------------------------*/
 
         
-           Root tipos1;
+            Root tipos1 = new Root();
             var url = $"https://www.dnd5eapi.co/api/classes/";
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -59,8 +59,13 @@ internal class Program
                         using (StreamReader objReader = new StreamReader(strReader))
                         {
                             string responseBody = objReader.ReadToEnd();
+                            File.WriteAllText("tipos.json", responseBody);
                             //System.Console.WriteLine(responseBody);
-                            tipos1   = JsonSerializer.Deserialize<Root>(responseBody);
+                            //tipos1   = JsonSerializer.Deserialize<Root>(responseBody);
+                            // foreach (var item in tipos1.results)
+                            // {
+                            //     System.Console.WriteLine(item.name);
+                            // }
                             
                             
                         }
@@ -71,6 +76,7 @@ internal class Program
             {
                 Console.WriteLine("Problemas de acceso a la API");
             }
+            
         
       
         /*---------------------------------------------------------------------------------------------------*/
@@ -139,7 +145,7 @@ internal class Program
         for (int i = 0; i < message.Length; i++)
         {
             Console.Write(message[i]);
-            Thread.Sleep(5); // Retardo de 100 milisegundos entre cada carácter
+            Thread.Sleep(1); // Retardo de 100 milisegundos entre cada carácter
         }
         Console.WriteLine();
     }
@@ -171,9 +177,9 @@ internal class Program
 
                 DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
                 p2.Salud = p2.Salud - DañoProvocado;
-                EscribirMensaje(p1.Nombre + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)]);
+                EscribirMensaje(p1.Apodo + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)]);
                 EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
-                EscribirMensaje("La vida de " + p2.Nombre + " es: " + p2.Salud.ToString("0.00"));
+                EscribirMensaje("La vida de " + p2.Apodo + " es: " + p2.Salud.ToString("0.00"));
 
             }
             else
@@ -184,9 +190,9 @@ internal class Program
 
                 DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
                 p1.Salud = p1.Salud - DañoProvocado;
-                EscribirMensaje(p2.Nombre + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
+                EscribirMensaje(p2.Apodo + " utiliza el poder de:" + poderes.poderesAtaque[random.Next(0, 10)]);
                 EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
-                EscribirMensaje("La vida de " + p1.Nombre + " es: " + p1.Salud.ToString("0.00"));
+                EscribirMensaje("La vida de " + p1.Apodo + " es: " + p1.Salud.ToString("0.00"));
             }
 
             i++;

@@ -1,3 +1,4 @@
+using System.Text.Json;
 namespace CrearPersonaje
 {
 
@@ -18,7 +19,11 @@ namespace CrearPersonaje
             var valoresTipo = Enum.GetValues(typeof(tipo));
             nuevoPersonaje.Tipo = (tipo)valoresTipo.GetValue(random.Next(valoresTipo.Length));
             nuevoPersonaje.Nombre = nombresYapodos.nombres[random.Next(0, 10)];
-            nuevoPersonaje.Apodo = nombresYapodos.apodos[random.Next(0, 10)];
+            var jsonString = File.ReadAllText("tipos.json");
+            Root personajesDeserializados = JsonSerializer.Deserialize<Root>(jsonString);
+            int rand = random.Next(0, personajesDeserializados.results.Count());
+            nuevoPersonaje.Apodo = personajesDeserializados.results[rand].name;
+            personajesDeserializados.results.RemoveAt(rand);
             nuevoPersonaje.Edad = random.Next(10,100);
             int añoactual=DateTime.Now.Year;
             int añonacimiento=añoactual-nuevoPersonaje.Edad;
