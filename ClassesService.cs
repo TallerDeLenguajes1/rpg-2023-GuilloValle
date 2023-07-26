@@ -26,7 +26,7 @@ public class ClassesService
                             using (StreamReader objReader = new StreamReader(strReader))
                             {
                                 var salida  = objReader.ReadToEnd();
-                                var classes = JsonSerializer.Deserialize<PlayerClassGroup>(salida)?.Classes; //Pregunto si es vacio lo que trajo la api
+                                var classes = JsonSerializer.Deserialize<PlayerTypeGroup>(salida)?.Classes; //Pregunto si es vacio lo que trajo la api
                                 classes?.ForEach(classes => classesNames.Add(classes.name));                 //Cargo la lista con los nombres que trajo la api
                             }
                         }

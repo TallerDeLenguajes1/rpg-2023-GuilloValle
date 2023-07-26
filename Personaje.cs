@@ -13,8 +13,7 @@ namespace CrearPersonaje
         private string? apodo;
         private DateTime fechaDenacimiento;
         private int edad;
-        //private poder poder;
-        private tipo tipo;
+        private string? tipo;
 
         public int Velocidad { get => velocidad; set => velocidad = value; }
         public int Destreza { get => destreza; set => destreza = value; }
@@ -26,7 +25,9 @@ namespace CrearPersonaje
         public string? Apodo { get => apodo; set => apodo = value; }
         public DateTime FechaDenacimiento { get => fechaDenacimiento; set => fechaDenacimiento = value; }
         public int Edad { get => edad; set => edad = value; }
-        public tipo Tipo { get => tipo; set => tipo = value; }
-        //public poder Poder { get => poder; set => poder = value; }
+
+        public string? Tipo { get => tipo; set => tipo = value; }
+        
+      
     }
 }

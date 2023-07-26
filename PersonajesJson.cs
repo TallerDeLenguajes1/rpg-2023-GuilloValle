@@ -27,10 +27,7 @@ public class PersonajesJson
             var jsonString = File.ReadAllText(fileName);
             List<Personaje> personajesDeserializados = JsonSerializer.Deserialize<List<Personaje>>(jsonString);
             return personajesDeserializados;
-            /*foreach (Personaje personaje in personajesDeserializados)
-            {
-                MostrarDatos(personaje);
-            }*/
+     
         }
 
         public bool Existe(string fileName)

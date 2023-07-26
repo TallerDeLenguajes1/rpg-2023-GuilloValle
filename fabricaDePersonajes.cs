@@ -16,14 +16,28 @@ namespace CrearPersonaje
             nuevoPersonaje.Nivel = random.Next(1, 11);
             nuevoPersonaje.Armadura = random.Next(1, 11);
             nuevoPersonaje.Salud = 100;
-            var valoresTipo = Enum.GetValues(typeof(tipo));
-            nuevoPersonaje.Tipo = (tipo)valoresTipo.GetValue(random.Next(valoresTipo.Length));
-            nuevoPersonaje.Nombre = nombresYapodos.nombres[random.Next(0, 10)];
-            var jsonString = File.ReadAllText("tipos.json");
-            PlayerClassGroup personajesDeserializados = JsonSerializer.Deserialize<PlayerClassGroup>(jsonString);
-            int rand = random.Next(0, personajesDeserializados.Classes.Count());
-            nuevoPersonaje.Apodo = personajesDeserializados.Classes[rand].name;
-            personajesDeserializados.Classes.RemoveAt(rand);
+            nuevoPersonaje.Nombre = nombresYapodos.nombres[random.Next(0, 30)];
+            nuevoPersonaje.Apodo = nombresYapodos.apodos[random.Next(0, 30)];
+            if (File.Exists("tipos.json"))
+            {   
+                var jsonString = File.ReadAllText("tipos.json");
+                var classesNames = JsonSerializer.Deserialize<List<string>>(jsonString);
+                if (classesNames.Count > 0)
+                {
+                    int rand = random.Next(0, classesNames.Count);
+                    nuevoPersonaje.Tipo = classesNames[rand];
+                    classesNames.RemoveAt(rand);
+
+                    // Guardar el JSON actualizado sin el elemento seleccionado
+                    jsonString = JsonSerializer.Serialize(classesNames);
+                    File.WriteAllText("tipos.json", jsonString);
+                }
+               
+            }else
+            {
+                nuevoPersonaje.Tipo = nombresYapodos.tiposDePersonajes[random.Next(0, 30)];
+            }
+           
             nuevoPersonaje.Edad = random.Next(10,100);
             int añoactual=DateTime.Now.Year;
             int añonacimiento=añoactual-nuevoPersonaje.Edad;

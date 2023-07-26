@@ -24,26 +24,31 @@ internal class Program
         {
 
             Personajes = PersonajesJson1.LeerPesonajes("personajes.json");
-            // foreach (var personaje in Personajes)
-            // {
-            //     MostrarDatos(personaje);
-            // }
-
         }
         else
-        {
-            CargarPesonajesALista(Personajes, 8);
-            PersonajesJson1.GuardarPersonaje(Personajes, "personajes.json");
-            // foreach (var personaje in Personajes)
-            // {
-            //     MostrarDatos(personaje);
-            // }
+        {   
+            var classesNames = ClassesService.GetClassesNames();
+            if (classesNames.Count() == 0 )
+            {
+                CargarPesonajesALista(Personajes, 8);
+                PersonajesJson1.GuardarPersonaje(Personajes, "personajes.json");
+                System.Console.WriteLine("1");   
+            }else
+            {             
+                string json = JsonSerializer.Serialize(classesNames);
+                File.WriteAllText("tipos.json", json);
+                CargarPesonajesALista(Personajes, 8);
+                PersonajesJson1.GuardarPersonaje(Personajes, "personajes.json");
+                System.Console.WriteLine("2");   
+            }
+            
         }
 
         /*---------------------------------------------------------------------------------------------------*/
 
         
-        var classesNames = ClassesService.GetClassesNames();
+        
+        
         // Tu aplicación que hacer si esta lista llega vacía 
         // - > reemplazamos por una lista genérica 
         // - > Buscamos apagamos el sistema
@@ -66,7 +71,8 @@ internal class Program
                 Personaje personaje1 = ElegirPersonaje(Personajes, random);
                 Personaje personaje2 = ElegirPersonaje(Personajes, random);
 
-                Console.WriteLine($"{personaje1.Nombre} vs {personaje2.Nombre}");
+                Console.WriteLine(personaje1.Nombre + " \""+personaje1.Apodo+"\" "+"de tipo: "+personaje1.Tipo +" vs "+ personaje2.Nombre + " \""+personaje2.Apodo+"\""+"de tipo: "+personaje2.Tipo);
+
 
                 Personaje ganador = Lucha(personaje1, personaje2, random);
 
@@ -84,8 +90,11 @@ internal class Program
 
             Personajes = proximosPersonajes;
             ronda++;
-            System.Console.WriteLine("PRESIONE ENTER PARA SEGUIR");
-            Console.ReadKey();
+            if (ronda < 3)
+            {
+                System.Console.WriteLine("PRESIONE ENTER PARA SEGUIR");
+                Console.ReadKey();
+            }
             
         }
         
@@ -137,7 +146,7 @@ internal class Program
                         using (StreamReader objReader = new StreamReader(strReader))
                         {
                             var salida  = objReader.ReadToEnd();
-                            var classes = JsonSerializer.Deserialize<PlayerClassGroup>(salida)?.Classes;
+                            var classes = JsonSerializer.Deserialize<PlayerTypeGroup>(salida)?.Classes;
                             classes?.ForEach(classes => classesNames.Add(classes.name));
                         }
                     }
@@ -221,9 +230,21 @@ internal class Program
 
         DañoProvocado = ((ataque * efectidad) - defensa) / constanteDeAjuste;
         defensor.Salud = defensor.Salud - DañoProvocado;
-        EscribirMensaje(atacante.Apodo + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)]);
-        EscribirMensaje("DAÑO REALIZADO: " + DañoProvocado.ToString("0.00"));
-        EscribirMensaje("La vida de " + defensor.Apodo + " es: " + defensor.Salud.ToString("0.00"));
+
+        // Calcular la longitud del mensaje más largo
+        string mensajeAtaque = atacante.Nombre + " ATACA CON:" + poderes.poderesAtaque[random.Next(0, 10)];
+        string mensajeDaño = "DAÑO REALIZADO: " + DañoProvocado.ToString("0.00");
+        string mensajeVida = "La vida de " + defensor.Nombre + " es: " + defensor.Salud.ToString("0.00");
+        int mensajeLongitud = Math.Max(mensajeAtaque.Length, Math.Max(mensajeDaño.Length, mensajeVida.Length));
+
+        // Imprimir el recuadro alrededor de las 3 líneas
+        Console.WriteLine(new string('-', mensajeLongitud + 4));
+        EscribirMensaje($"| {mensajeAtaque.PadRight(mensajeLongitud)} |");
+        EscribirMensaje($"| {mensajeDaño.PadRight(mensajeLongitud)} |");
+        EscribirMensaje($"| {mensajeVida.PadRight(mensajeLongitud)} |");
+        Console.WriteLine(new string('-', mensajeLongitud + 4));
+
+
     }
 
     private static void MostrarDatos(Personaje P)
