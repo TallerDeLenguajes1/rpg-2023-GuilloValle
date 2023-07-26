@@ -14,10 +14,10 @@ internal class Program
     private static void Main(string[] args)
     {
 
-        var Personajes = new List<Personaje>();      //LISTA CON LOS PERSONAJES
+        var Personajes = new List<Personaje>();      
         List<Personaje> ganadores = new List<Personaje>();
-        var PersonajesJson1 = new PersonajesJson();  // INSTACIO LA CLASE PARA PODER USAR LOS METODOS
-        Random random = new Random();                // INSTACIO LA CLASE PARA PODER USAR LOS METODOS
+        var PersonajesJson1 = new PersonajesJson();  
+        Random random = new Random();                
 
 
         if (PersonajesJson1.Existe("personajes.json"))
@@ -43,16 +43,6 @@ internal class Program
             }
             
         }
-
-        /*---------------------------------------------------------------------------------------------------*/
-
-        
-        
-        
-        // Tu aplicación que hacer si esta lista llega vacía 
-        // - > reemplazamos por una lista genérica 
-        // - > Buscamos apagamos el sistema
-        //
       
         /*---------------------------------------------------------------------------------------------------*/
        
@@ -73,20 +63,11 @@ internal class Program
 
                 Console.WriteLine(personaje1.Nombre + " \""+personaje1.Apodo+"\" "+"de tipo: "+personaje1.Tipo +" vs "+ personaje2.Nombre + " \""+personaje2.Apodo+"\""+"de tipo: "+personaje2.Tipo);
 
-
                 Personaje ganador = Lucha(personaje1, personaje2, random);
-
-                Console.WriteLine($"Ganador: {ganador.Nombre}");
-                Console.WriteLine();
 
                 proximosPersonajes.Add(ganador);
             }
                 
-            if (Personajes.Count == 1)
-            {
-                Console.WriteLine($"Ganador de la Ronda {ronda}: {Personajes[0].Nombre}");
-                Console.WriteLine();
-            }
 
             Personajes = proximosPersonajes;
             ronda++;
@@ -96,13 +77,10 @@ internal class Program
                 Console.ReadKey();
             }
             
-        }
-        
-        
+        }        
 
         Console.WriteLine($"El ganador del torneo es: {Personajes[0].Nombre}");
         
-
     }
 
     private static void ShowCurrentRound(int ronda)
@@ -124,6 +102,7 @@ internal class Program
             break;
         }
 
+        Console.WriteLine();
         Console.WriteLine($"--- Ronda {ronda} , {TipoRonda}  ---");
         Console.WriteLine();
     }
@@ -204,12 +183,14 @@ internal class Program
         if (p2.Salud <= 0)
         {
             System.Console.WriteLine(p1.Nombre + " ES EL GANADOR");
+            System.Console.WriteLine();
             p1.Salud = 100;
             return p1;
         }
         else
         {
             System.Console.WriteLine(p2.Nombre + " ES EL GANADOR");
+            System.Console.WriteLine();
             p2.Salud = 100;
             return p2;
         }
